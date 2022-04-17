@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use App\Models\Requisition;
+use App\Models\Stock;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,11 @@ class RequisitionController extends Controller
     }
 
     public function show(){
-        $requisitions = Requisition::get();
+        if(auth()->user()->type == 'store_executive'){
+            $requisitions = Requisition::where('status',1)->get();
+        }else{
+            $requisitions = Requisition::get();
+        }
         foreach ($requisitions as $requisition){
             $requisition->item_qty = json_decode($requisition->item_qty,true);
         }
@@ -185,5 +190,45 @@ class RequisitionController extends Controller
             Log::error($errorMessage);
             return response()->json(['error' => $e->getMessage()], 400);
         }
+    }
+
+    public function issueItems(Request $request,$id){
+
+        // Begin Transaction
+        DB::beginTransaction();
+
+        try {
+
+            $requisition = Requisition::findOrFail($id);
+            $details = json_decode($requisition->item_qty,  true);
+            foreach ($details as $detail){
+                $stock = Stock::findOrFail($detail['item_id']);
+                if ($stock->qty > $detail['qty']){
+                    $stock->qty = $stock->qty - $detail['qty'];
+                    $stock->updated_at = Carbon::now();
+                    $stock->save();
+                }else{
+                    return redirect()->route('requisition-show')->with('success', "Requisition can not be issued, Please check Stock.");
+                }
+            }
+            $requisition->issue_status = 1;
+            $requisition->updated_at = Carbon::now();
+            $requisition->save();
+
+            // Commit Transaction
+            DB::commit();
+
+            return redirect()->route('requisition-show')->with('success', "Requisition issued successfully.");
+
+        } catch (\Illuminate\Database\QueryException $e) {
+
+            // Rollback Transaction
+            DB::rollback();
+
+            $errorMessage = $e->getMessage();
+            Log::error($errorMessage);
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+
     }
 }

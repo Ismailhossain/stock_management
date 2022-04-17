@@ -20,7 +20,9 @@
         </div>
         <div class="row">
             <div class="col-sm-12 form-group">
-               <a class="btn btn-primary" role="button" href="{{route('supplier-create')}}">Add Supplier</a>
+                @if(auth()->user()->type == 'admin')
+                     <a class="btn btn-primary" role="button" href="{{route('supplier-create')}}">Add Supplier</a>
+                @endif
             </div>
         </div>
         <div class="row">

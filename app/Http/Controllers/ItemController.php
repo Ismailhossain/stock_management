@@ -67,16 +67,17 @@ class ItemController extends Controller
         return DataTables::of($items)
             ->addIndexColumn()
             ->addColumn('action',function ($item){
-                return '<form method="post" id="verifyForm-'.$item->id.'" action="' . route('item-delete', $item->id) .'">
+                if(auth()->user()->type == 'admin')   return '<form method="post" id="verifyForm-'.$item->id.'" action="' . route('item-delete', $item->id) .'">
                                        '.csrf_field().'
                                         <input type="hidden" name="_method" value="put">
                             </form>
                             <a href="' . route('item-edit', $item->id) .'" class="btn btn-primary btn-sm" role="button">Edit</a>
                             <a href="#0" class="btn btn-danger btn-sm" onclick="verify('.$item->id.')"  role="button">Delete</a>';
+                return '<span class="badge badge-danger">N/A</span>';
             })
             ->editcolumn('status',function ($item){
-                if ($item->status == 1) return '<span href="#0" id="ActiveInactive" statusCode="'.$item->status.'" data_id="'.$item->id.'" tableName="items" class="badge badge-success cursor-pointer" role="button">Active</span>';
-                return '<span href="#0" id="ActiveInactive" statusCode="'.$item->status.'" data_id="'.$item->id.'" tableName="items" class="badge badge-danger cursor-pointer" role="button">Inactive</span>';
+                    if ($item->status == 1) return '<span href="#0" id="ActiveInactive" statusCode="'.$item->status.'" data_id="'.$item->id.'" tableName="items" class="badge badge-success cursor-pointer" role="button">Active</span>';
+                    return '<span href="#0" id="ActiveInactive" statusCode="'.$item->status.'" data_id="'.$item->id.'" tableName="items" class="badge badge-danger cursor-pointer" role="button">Inactive</span>';
             })
             ->rawColumns(['action','status'])
             ->make(true);

@@ -60,6 +60,7 @@ Route::group(['prefix' => 'requisition'], function () {
     Route::put('delete/{id}', [RequisitionController::class, 'delete'])->name('requisition-delete');
     Route::put('status/{id}', [RequisitionController::class, 'statusUpdate'])->name('requisition-status');
     Route::post('itemQty', [RequisitionController::class, 'getItemQtyByAjax'])->name('requisition-itemQty-ajax');
+    Route::put('issue/items/{id}', [RequisitionController::class, 'issueItems'])->name('requisition-issue-items');
 
 });
 

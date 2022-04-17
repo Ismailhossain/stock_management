@@ -68,12 +68,15 @@ class StockController extends Controller
         return DataTables::of($stocks)
             ->addIndexColumn()
             ->addColumn('action',function ($stock){
-                return '<form method="post" id="verifyForm-'.$stock->id.'" action="' . route('stock-delete', $stock->id) .'">
+                if(auth()->user()->type == 'admin')    return '<form method="post" id="verifyForm-'.$stock->id.'" action="' . route('stock-delete', $stock->id) .'">
                                        '.csrf_field().'
                                         <input type="hidden" name="_method" value="put">
                             </form>
                             <a href="' . route('stock-edit', $stock->id) .'" class="btn btn-primary btn-sm" role="button">Edit</a>
                             <a href="#0" class="btn btn-danger btn-sm" onclick="verify('.$stock->id.')"  role="button">Delete</a>';
+                if(auth()->user()->type == 'store_executive')
+                    return '<a href="' . route('stock-edit', $stock->id) .'" class="btn btn-primary btn-sm" role="button">Edit</a>';
+                return '<span class="badge badge-danger">N/A</span>';
             })
             ->rawColumns(['action'])
             ->make(true);

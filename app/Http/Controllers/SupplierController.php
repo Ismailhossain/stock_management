@@ -62,12 +62,13 @@ class SupplierController extends Controller
         return DataTables::of($suppliers)
             ->addIndexColumn()
             ->addColumn('action',function ($supplier){
-                return '<form method="post" id="verifyForm-'.$supplier->id.'" action="' . route('supplier-delete', $supplier->id) .'">
+                if(auth()->user()->type == 'admin')  return '<form method="post" id="verifyForm-'.$supplier->id.'" action="' . route('supplier-delete', $supplier->id) .'">
                                        '.csrf_field().'
                                         <input type="hidden" name="_method" value="put">
                             </form>
                             <a href="' . route('supplier-edit', $supplier->id) .'" class="btn btn-primary btn-sm" role="button">Edit</a>
                             <a href="#0" class="btn btn-danger btn-sm" onclick="verify('.$supplier->id.')"  role="button">Delete</a>';
+                return '<span class="badge badge-danger">N/A</span>';
             })
             ->editcolumn('status',function ($supplier){
                 if ($supplier->status == 1) return '<span href="#0" id="ActiveInactive" statusCode="'.$supplier->status.'" data_id="'.$supplier->id.'" tableName="suppliers" class="badge badge-success cursor-pointer" role="button">Active</span>';

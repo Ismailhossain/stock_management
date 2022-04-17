@@ -17,7 +17,7 @@
                 @guest
                     Welcome
                 @else
-                       <span style="color: #f0f9ff; margin: 10px;">MBM Group -  Welcome {{ Auth::user()->name }}</span>
+                       <span style="color: #f0f9ff; margin: 10px; text-align: justify;">Welcome {{ Auth::user()->name }}</span>
             @endguest
             <hr/>
             @if(auth()->user()->type == 'admin')
@@ -33,7 +33,19 @@
                 <li>
                     <a href="{{ route('requisition-show') }}">Requisition List</a>
                 </li>
-
+            @endif
+            @if(auth()->user()->type == 'employee')
+                <li>
+                    <a href="{{ route('requisition-show') }}">Requisition List</a>
+                </li>
+            @endif
+            @if(auth()->user()->type == 'store_executive')
+                <li>
+                    <a href="{{ route('stock-show') }}">Stock List</a>
+                </li>
+                <li>
+                    <a href="{{ route('requisition-show') }}">Requisition List</a>
+                </li>
             @endif
             <li>
                 <a href="{{ url('/logout') }}"

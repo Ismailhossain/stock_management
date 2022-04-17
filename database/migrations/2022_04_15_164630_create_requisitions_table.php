@@ -18,6 +18,7 @@ class CreateRequisitionsTable extends Migration
             $table->string('name')->nullable();
             $table->json('item_qty')->nullable();
             $table->integer('status')->default(0);
+            $table->integer('issue_status')->default(0);
             $table->timestamps();
         });
     }

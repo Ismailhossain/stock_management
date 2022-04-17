@@ -25,7 +25,9 @@
         </div>
         <div class="row">
             <div class="col-sm-12 form-group">
-               <a class="btn btn-primary" role="button" href="{{route('item-create')}}">Add Item</a>
+                @if(auth()->user()->type == 'admin')
+                    <a class="btn btn-primary" role="button" href="{{route('item-create')}}">Add Item</a>
+                @endif
             </div>
         </div>
         <div class="row">
